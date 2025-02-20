@@ -15,7 +15,7 @@ class Main {
         System.err.println(e);
         JOptionPane.showMessageDialog(null, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
-    private static void launch(String v, String file) {
+    private static void launch(String file) {
         String cmd = "java \"-Djava.library.path=" + dir + "bin\\natives\" -cp \"" + dir + "bin\\*;" + dir + file + "\" net.minecraft.client.Minecraft";
         System.out.println(cmd);
         
@@ -36,9 +36,6 @@ class Main {
         }.start();
     }
     public static void main(String[] args) {
-        String[] versions = new String[] {"b1.8"};
-        
-        String[] colnames = new String[] {"Version", "File"};
         
         ArrayList<String[]> rowlist = new ArrayList<String[]>();
         
@@ -46,23 +43,16 @@ class Main {
             String fname = f.getName();
             
             if (fname.endsWith(".jar")) {
-                String v = "";
-                for (String ver : versions) {
-                    if (fname.contains(ver)) {
-                        v = ver;
-                    }
-                }
-                
-                rowlist.add(new String[] {v, fname});
+                rowlist.add(new String[] {fname});
             }
         }
         
-        String[][] rows = new String[rowlist.size()][2];
+        String[][] rows = new String[rowlist.size()][1];
         for (int i = 0; i < rows.length; i++) {
             rows[i] = rowlist.get(i);
         }
         
-        JTable table = new JTable(new DefaultTableModel(rows, colnames) {
+        JTable table = new JTable(new DefaultTableModel(rows, new String[] {"Files"}) {
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
@@ -88,7 +78,7 @@ class Main {
             public void actionPerformed(ActionEvent e) {
                 int r = table.getSelectedRow();
                 if (r != -1 && r < rows.length) {
-                    launch(rows[r][0], rows[r][1]);
+                    launch(rows[r][0]);
                 }
             }
         });
