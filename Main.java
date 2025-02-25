@@ -15,7 +15,7 @@ import java.net.URLClassLoader;
 import java.net.URL;
 
 class Main {
-    private static String dir = "..\\";
+    private static String dir = "jars\\";
     private static JFrame f;
     private static void errorbox(String e) {
         System.err.println(e);
@@ -29,7 +29,7 @@ class Main {
         }
     }
     private static void launchbeta(String file) {
-        String cmd = "java \"-Djava.library.path=" + dir + "bin\\natives\" -cp \"" + dir + "bin\\*;" + dir + file + "\" net.minecraft.client.Minecraft";
+        String cmd = "java \"-Djava.library.path=" + "bin\\natives\" -cp \"" + "bin\\*;" + dir + file + "\" net.minecraft.client.Minecraft";
         System.out.println(cmd);
         
         new Thread() {
