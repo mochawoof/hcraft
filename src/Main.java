@@ -8,15 +8,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import java.util.jar.*;
+import java.util.Enumeration;
+
+import java.net.URLClassLoader;
+import java.net.URL;
+
 class Main {
-    private static final String dir = "..\\";
+    private static String dir = ".";
+    private static final boolean debug = false;
     private static JFrame f;
     private static void errorbox(String e) {
         System.err.println(e);
         JOptionPane.showMessageDialog(null, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
-    private static void launch(String file) {
-        launchbeta(file);
+    private static void launch(String file, String type) {
+        if (type.equals("Beta")) {
+            launchbeta(file);
+        } else if (type.equals("Applet")) {
+            launchapplet(file);
+        }
     }
     private static void launchbeta(String file) {
         String cmd = "java \"-Djava.library.path=" + dir + "bin\\natives\" -cp \"" + dir + "bin\\*;" + dir + file + "\" net.minecraft.client.Minecraft";
@@ -38,15 +49,46 @@ class Main {
             }
         }.start();
     }
+    private static void launchapplet(String file) {
+        new Thread() {
+            public void run() {
+                errorbox("Not yet supported!");
+            }
+        }.start();
+    }
     public static void main(String[] args) {
+        
+        if (debug) {
+            dir = "..\\";
+        }
         
         ArrayList<String[]> rowlist = new ArrayList<String[]>();
         
-        for (File f : new File(dir).listFiles()) {
-            String fname = f.getName();
+        for (File fl : new File(dir).listFiles()) {
+            String fname = fl.getName();
+            String type = "Invalid";
             
             if (fname.endsWith(".jar")) {
-                rowlist.add(new String[] {fname});
+                try (JarFile jar = new JarFile(fl)) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry e = entries.nextElement();
+                        if (e.getName().equals("net/minecraft/client/Minecraft.class")) {
+                            type = "Beta";
+                        } else if (e.getName().equals("net/minecraft/client/MinecraftApplet.class")) {
+                            if (!type.equals("Beta")) {
+                                type = "Applet";
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Invalid jar " + fname);
+                }
+                
+                if (!type.equals("Invalid")) {
+                    rowlist.add(new String[] {fname, type});
+                }
             }
         }
         
@@ -55,13 +97,13 @@ class Main {
             rows[i] = rowlist.get(i);
         }
         
-        JTable table = new JTable(new DefaultTableModel(rows, new String[] {"Files"}) {
+        JTable table = new JTable(new DefaultTableModel(rows, new String[] {"File", "Launcher"}) {
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
         });  
         
-        f = new JFrame("HCraft");
+        f = new JFrame("HCraft 1.0");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(400, 200);
         f.setIconImage(Res.getAsImage("icon.png"));
@@ -81,7 +123,7 @@ class Main {
             public void actionPerformed(ActionEvent e) {
                 int r = table.getSelectedRow();
                 if (r != -1 && r < rows.length) {
-                    launch(rows[r][0]);
+                    launch(rows[r][0], rows[r][1]);
                 }
             }
         });
