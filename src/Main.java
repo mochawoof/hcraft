@@ -15,8 +15,7 @@ import java.net.URLClassLoader;
 import java.net.URL;
 
 class Main {
-    private static String dir = ".";
-    private static final boolean debug = false;
+    private static String dir = "..\\";
     private static JFrame f;
     private static void errorbox(String e) {
         System.err.println(e);
@@ -57,10 +56,6 @@ class Main {
         }.start();
     }
     public static void main(String[] args) {
-        
-        if (debug) {
-            dir = "..\\";
-        }
         
         ArrayList<String[]> rowlist = new ArrayList<String[]>();
         
