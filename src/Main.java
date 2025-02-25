@@ -16,6 +16,9 @@ class Main {
         JOptionPane.showMessageDialog(null, e, "Error", JOptionPane.ERROR_MESSAGE);
     }
     private static void launch(String file) {
+        launchbeta(file);
+    }
+    private static void launchbeta(String file) {
         String cmd = "java \"-Djava.library.path=" + dir + "bin\\natives\" -cp \"" + dir + "bin\\*;" + dir + file + "\" net.minecraft.client.Minecraft";
         System.out.println(cmd);
         
