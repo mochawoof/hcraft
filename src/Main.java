@@ -15,8 +15,8 @@ import java.net.URLClassLoader;
 import java.net.URL;
 
 class Main {
-    private static String dir = ".\\jars\\";
-    private static String bindir = ".\\bin\\";
+    private static String dir = "..\\jars\\";
+    private static String bindir = "..\\bin\\";
     private static JFrame f;
     private static JTable table;
     private static String[][] rows;
@@ -46,7 +46,7 @@ class Main {
                     
                     Scanner errorscan = new Scanner(p.getErrorStream()).useDelimiter("\n");
                     while (errorscan.hasNext()) {
-                        System.err.print(errorscan.next());
+                        System.err.println(errorscan.next());
                     }
                 } catch (Exception e) {
                     errorbox(e);

@@ -2,3 +2,4 @@
 *.ctxt
 .settings
 *.log
+logs
