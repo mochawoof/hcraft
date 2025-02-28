@@ -15,11 +15,14 @@ import java.net.URLClassLoader;
 import java.net.URL;
 
 class Main {
-    private static String dir = "..\\jars\\";
-    private static String bindir = "..\\bin\\";
+    // .\\ should be changed to ..\\ while testing
+    private static String dir = ".\\jars\\";
+    private static String bindir = ".\\bin\\";
+    
     private static JFrame f;
     private static JTable table;
     private static String[][] rows;
+    private static ArrayList<Process> processes;
     
     private static void errorbox(Exception e) {
         errorbox(e.toString());
@@ -43,10 +46,11 @@ class Main {
             public void run() {
                 try {
                     Process p = Runtime.getRuntime().exec(cmd);
+                    processes.add(p);
                     
                     Scanner errorscan = new Scanner(p.getErrorStream()).useDelimiter("\n");
                     while (errorscan.hasNext()) {
-                        System.err.println(errorscan.next());
+                        System.err.print(errorscan.next());
                     }
                 } catch (Exception e) {
                     errorbox(e);
@@ -62,7 +66,7 @@ class Main {
         }.start();
     }
     private static Component spacing() {
-        return Box.createRigidArea(new Dimension(2, 0));
+        return Box.createRigidArea(new Dimension(1, 0));
     }
     private static void refresh() {
         ArrayList<String[]> rowlist = new ArrayList<String[]>();
@@ -108,7 +112,13 @@ class Main {
     }
     public static void main(String[] args) {
         
-        f = new JFrame("HCraft 1.1");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        f = new JFrame("HCraft 1.2");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(500, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
@@ -158,6 +168,19 @@ class Main {
             }
         });
         bottom.add(playbtn);
+        bottom.add(spacing());
+        
+        processes = new ArrayList<Process>();
+        JButton quitallbtn = new JButton("Quit All");
+        quitallbtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (Process p : processes) {
+                    p.destroyForcibly();
+                }
+                processes.clear();
+            }
+        });
+        bottom.add(quitallbtn);
         bottom.add(spacing());
         
         JButton closebtn = new JButton("Close");
