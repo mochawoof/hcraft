@@ -50,7 +50,7 @@ class Main {
                     
                     Scanner errorscan = new Scanner(p.getErrorStream()).useDelimiter("\n");
                     while (errorscan.hasNext()) {
-                        System.err.print(errorscan.next());
+                        System.err.println(errorscan.next());
                     }
                 } catch (Exception e) {
                     errorbox(e);
@@ -118,7 +118,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2");
+        f = new JFrame("HCraft 1.2.1");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(500, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
