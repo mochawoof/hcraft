@@ -36,6 +36,8 @@ class Main {
             launchbeta(file);
         } else if (type.equals("Applet")) {
             launchapplet(file);
+        } else if (type.equals("Classic Applet")) {
+            launchindevapplet(file);
         }
     }
     private static void launchbeta(String file) {
@@ -65,6 +67,13 @@ class Main {
             }
         }.start();
     }
+    private static void launchindevapplet(String file) {
+        new Thread() {
+            public void run() {
+                errorbox("Not yet supported!");
+            }
+        }.start();
+    }
     private static Component spacing() {
         return Box.createRigidArea(new Dimension(1, 0));
     }
@@ -85,6 +94,10 @@ class Main {
                         } else if (e.getName().equals("net/minecraft/client/MinecraftApplet.class")) {
                             if (!type.equals("Beta")) {
                                 type = "Applet";
+                            }
+                        } else if (e.getName().equals("com/mojang/minecraft/MinecraftApplet.class")) {
+                            if (!type.equals("Beta")) {
+                                type = "Classic Applet";
                             }
                         }
                     }
@@ -118,7 +131,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.1");
+        f = new JFrame("HCraft 1.2.2");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(500, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
