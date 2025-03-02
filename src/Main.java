@@ -47,7 +47,7 @@ class Main {
         } else if (type.equals("Applet")) {
             launchapplet(file);
         } else if (type.equals("Classic Applet")) {
-            launchindevapplet(file);
+            launchclassicapplet(file);
         }
     }
     private static void launchbeta(String file) {
@@ -78,7 +78,7 @@ class Main {
             }
         }.start();
     }
-    private static void launchindevapplet(String file) {
+    private static void launchclassicapplet(String file) {
         new Thread() {
             public void run() {
                 errorbox("Not yet supported!");
