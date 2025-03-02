@@ -13,16 +13,26 @@ import java.util.Enumeration;
 
 import java.net.URLClassLoader;
 import java.net.URL;
+import java.nio.file.Paths;
 
 class Main {
     // .\\ should be changed to ..\\ while testing
-    private static String dir = ".\\jars\\";
-    private static String bindir = ".\\bin\\";
+    private static String dir = norm("./jars/");
+    private static String bindir = norm("./bin/");
+    private static String datadir = norm("./data/");
     
     private static JFrame f;
     private static JTable table;
     private static String[][] rows;
     private static ArrayList<Process> processes;
+    
+    public static String resolve(String path, String opath) {
+        return Paths.get(path).toAbsolutePath().normalize().resolve(opath).toAbsolutePath().normalize().toString();
+    }
+    
+    private static String norm(String path) {
+        return Paths.get(path).toAbsolutePath().normalize().toString();
+    }
     
     private static void errorbox(Exception e) {
         errorbox(e.toString());
@@ -41,13 +51,14 @@ class Main {
         }
     }
     private static void launchbeta(String file) {
-        String cmd = "java \"-Djava.library.path=" + bindir + "natives\" -cp \"" + bindir + "*;" + dir + file + "\" net.minecraft.client.Minecraft";
-        System.out.println(cmd);
-        
         new Thread() {
             public void run() {
                 try {
-                    Process p = Runtime.getRuntime().exec(cmd);
+                    ProcessBuilder pb = new ProcessBuilder("java", "-Djava.library.path=" + resolve(bindir, "natives"), "-cp", resolve(bindir, "STAR").replace("STAR", "*") + ";" + resolve(dir, file), "net.minecraft.client.Minecraft");
+                    pb.environment().put("APPDATA", resolve(datadir, file.substring(0, file.lastIndexOf("."))));
+                    System.out.println(pb.command().toString());
+                    
+                    Process p = pb.start();
                     processes.add(p);
                     
                     Scanner errorscan = new Scanner(p.getErrorStream()).useDelimiter("\n");
@@ -131,7 +142,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.2");
+        f = new JFrame("HCraft 1.2.3");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(500, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
