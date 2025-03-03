@@ -19,9 +19,9 @@ import java.applet.*;
 
 class Main {
     // ./ should be changed to ../ while testing
-    private static String dir = norm("../jars/");
-    private static String bindir = norm("../bin/");
-    private static String datadir = norm("../data/");
+    private static String dir = norm("./jars/");
+    private static String bindir = norm("./bin/");
+    private static String datadir = norm("./data/");
     
     private static JFrame f;
     private static JTable table;
@@ -96,8 +96,8 @@ class Main {
     private static void launchapplet(String file) {
         new Thread() {
             public void run() {
-                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
-                //errorbox("Not yet supported!");
+                //appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+                errorbox("Not yet supported!");
             }
         }.start();
     }
@@ -165,7 +165,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.3");
+        f = new JFrame("HCraft 1.2.5");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
@@ -190,6 +190,7 @@ class Main {
                         Desktop.getDesktop().open(new File(resolve(datadir, rows[r][0].substring(0, rows[r][0].lastIndexOf(".")))));
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        errorbox("Selected data folder does not exist yet!");
                     }
                 }
             }
