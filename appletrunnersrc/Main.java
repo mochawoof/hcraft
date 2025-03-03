@@ -7,6 +7,9 @@ import java.awt.event.*;
 import java.applet.*;
 
 class Main {
+    public static String para(String p) {
+        return null;
+    }
     public static void main(String[] args) {
         String nativesdir = args[0];
         String bindir = args[1];
@@ -35,7 +38,12 @@ class Main {
             URLClassLoader cl = new URLClassLoader(classes);
             
             Class c = Class.forName(clazz, true, cl);
-            Applet a = (Applet) c.newInstance();
+            Applet a;
+            if (clazz.contains("com.mojang")) {
+                a = (ClassicMApplet) c.newInstance();
+            } else {
+                a = (MApplet) c.newInstance();
+            }
             
             JFrame fr = new JFrame("Minecraft");
             fr.setSize(656, 519);

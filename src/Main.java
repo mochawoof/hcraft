@@ -80,7 +80,7 @@ class Main {
     }
     private static void appletrunner(String file, String clazz) {
         wrapprocess(
-            new ProcessBuilder("java", "-jar", resolve(bindir, "appletrunner.jar"), resolve(bindir, "natives"), bindir, norm(file), clazz), 
+            new ProcessBuilder("java", "-cp", resolve(dir, file), "-jar", resolve(bindir, "appletrunner.jar"), resolve(bindir, "natives"), bindir, norm(file), clazz), 
             file
         );
     }
