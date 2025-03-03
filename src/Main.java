@@ -95,8 +95,8 @@ class Main {
     private static void launchapplet(String file) {
         new Thread() {
             public void run() {
-                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
-                //errorbox("Not yet supported!");
+                //appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+                errorbox("Not yet supported!");
             }
         }.start();
     }
@@ -164,9 +164,9 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.3");
+        f = new JFrame("HCraft 1.2.4");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(500, 300);
+        f.setSize(600, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
         
         table = new JTable();
@@ -180,13 +180,30 @@ class Main {
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
         bottom.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         
+        JButton openselecteddatafolderbtn = new JButton("Open Selected Data Folder");
+        openselecteddatafolderbtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int r = table.getSelectedRow();
+                if (r != -1 && r < rows.length) {
+                    try {
+                        Desktop.getDesktop().open(new File(resolve(datadir, rows[r][0].substring(0, rows[r][0].lastIndexOf(".")))));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+        bottom.add(openselecteddatafolderbtn);
+        bottom.add(spacing());
+        
         JButton openfolderbtn = new JButton("Open Folder");
         openfolderbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Desktop.getDesktop().open(new File(dir));
                 } catch (Exception ex) {
-                    errorbox(ex.toString());
+                    ex.printStackTrace();
+                    errorbox("Could not access jar folder!");
                 }
             }
         });
