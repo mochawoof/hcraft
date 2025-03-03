@@ -28,8 +28,6 @@ class Main {
     private static String[][] rows;
     private static ArrayList<Process> processes = new ArrayList<Process>();
     
-    private static ArrayList<JFrame> appletframes = new ArrayList<JFrame>();
-    
     private static String resolve(String path, String opath) {
         return Paths.get(path).toAbsolutePath().normalize().resolve(opath).toAbsolutePath().normalize().toString();
     }
@@ -54,11 +52,10 @@ class Main {
             launchclassicapplet(file);
         }
     }
-    private static void launchbeta(String file) {
+    private static void wrapprocess(ProcessBuilder pb, String file) {
         new Thread() {
             public void run() {
                 try {
-                    ProcessBuilder pb = new ProcessBuilder("java", "-Djava.library.path=" + resolve(bindir, "natives"), "-cp", resolve(bindir, "STAR").replace("STAR", "*") + ";" + resolve(dir, file), "net.minecraft.client.Minecraft");
                     pb.environment().put("APPDATA", resolve(datadir, file.substring(0, file.lastIndexOf("."))));
                     System.out.println(pb.command().toString());
                     
@@ -75,14 +72,23 @@ class Main {
             }
         }.start();
     }
-    private static void appletframe(String file, String clazz) {
-        
+    private static void launchbeta(String file) {
+        wrapprocess(
+            new ProcessBuilder("java", "-Djava.library.path=" + resolve(bindir, "natives"), "-cp", resolve(bindir, "STAR").replace("STAR", "*") + ";" + resolve(dir, file), "net.minecraft.client.Minecraft"), 
+            file
+        );
+    }
+    private static void appletrunner(String file, String clazz) {
+        wrapprocess(
+            new ProcessBuilder("java", "-jar", resolve(bindir, "appletrunner.jar"), resolve(bindir, "natives"), bindir, norm(file), clazz), 
+            file
+        );
     }
     private static void launchapplet(String file) {
-        appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+        appletrunner(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
     }
     private static void launchclassicapplet(String file) {
-        appletframe(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
+        appletrunner(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
     }
     private static Component spacing() {
         return Box.createRigidArea(new Dimension(1, 0));
@@ -138,11 +144,6 @@ class Main {
             p.destroyForcibly();
         }
         processes.clear();
-        
-        for (JFrame fr : appletframes) {
-            fr.dispose();
-        }
-        appletframes.clear();
     }
     public static void main(String[] args) {
         
@@ -152,7 +153,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.6");
+        f = new JFrame("HCraft 1.3");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
