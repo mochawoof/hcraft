@@ -19,9 +19,9 @@ import java.applet.*;
 
 class Main {
     // ./ should be changed to ../ while testing
-    private static String dir = norm("./jars/");
-    private static String bindir = norm("./bin/");
-    private static String datadir = norm("./data/");
+    private static String dir = norm("../jars/");
+    private static String bindir = norm("../bin/");
+    private static String datadir = norm("../data/");
     
     private static JFrame f;
     private static JTable table;
@@ -75,17 +75,20 @@ class Main {
     }
     private static void appletframe(String file, String clazz) {
         try {
-            URLClassLoader cl = new URLClassLoader(new URL[] {new File(file).toURL()});
+            System.setProperty("java.library.path", resolve("bindir", "natives"));
+            URL binall = new File(resolve(bindir, "STAR").replace("STAR", "*")).toURL();
+            URLClassLoader cl = new URLClassLoader(new URL[] {binall, new File(file).toURL()});
             
             Class c = Class.forName(clazz, true, cl);
             Applet a = (Applet) c.newInstance();
             
             JFrame f = new JFrame("Minecraft");
-            f.setSize(800, 600);
+            f.setSize(640, 480);
             f.add(a, BorderLayout.CENTER);
             
             a.init();
             a.start();
+            a.resize(640, 480);
             
             f.setVisible(true);
         } catch (Exception e) {
@@ -96,15 +99,14 @@ class Main {
     private static void launchapplet(String file) {
         new Thread() {
             public void run() {
-                //appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
-                errorbox("Not yet supported!");
+                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
             }
         }.start();
     }
     private static void launchclassicapplet(String file) {
         new Thread() {
             public void run() {
-                errorbox("Not yet supported!");
+                appletframe(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
             }
         }.start();
     }
@@ -165,7 +167,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.5");
+        f = new JFrame("HCraft 1.2.6");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
