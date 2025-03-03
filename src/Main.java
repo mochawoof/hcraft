@@ -11,11 +11,11 @@ import java.util.Scanner;
 import java.util.jar.*;
 import java.util.Enumeration;
 
-import java.net.URLClassLoader;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Paths;
 
 import java.applet.*;
+import java.lang.reflect.*;
 
 class Main {
     // ./ should be changed to ../ while testing
@@ -26,7 +26,9 @@ class Main {
     private static JFrame f;
     private static JTable table;
     private static String[][] rows;
-    private static ArrayList<Process> processes;
+    private static ArrayList<Process> processes = new ArrayList<Process>();
+    
+    private static ArrayList<JFrame> appletframes = new ArrayList<JFrame>();
     
     private static String resolve(String path, String opath) {
         return Paths.get(path).toAbsolutePath().normalize().resolve(opath).toAbsolutePath().normalize().toString();
@@ -74,41 +76,13 @@ class Main {
         }.start();
     }
     private static void appletframe(String file, String clazz) {
-        try {
-            System.setProperty("java.library.path", resolve("bindir", "natives"));
-            URL binall = new File(resolve(bindir, "STAR").replace("STAR", "*")).toURL();
-            URLClassLoader cl = new URLClassLoader(new URL[] {binall, new File(file).toURL()});
-            
-            Class c = Class.forName(clazz, true, cl);
-            Applet a = (Applet) c.newInstance();
-            
-            JFrame f = new JFrame("Minecraft");
-            f.setSize(640, 480);
-            f.add(a, BorderLayout.CENTER);
-            
-            a.init();
-            a.start();
-            a.resize(640, 480);
-            
-            f.setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Class load failed");
-        }
+        
     }
     private static void launchapplet(String file) {
-        new Thread() {
-            public void run() {
-                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
-            }
-        }.start();
+        appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
     }
     private static void launchclassicapplet(String file) {
-        new Thread() {
-            public void run() {
-                appletframe(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
-            }
-        }.start();
+        appletframe(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
     }
     private static Component spacing() {
         return Box.createRigidArea(new Dimension(1, 0));
@@ -158,6 +132,17 @@ class Main {
                 return false;
             }
         });
+    }
+    private static void quitAll() {
+        for (Process p : processes) {
+            p.destroyForcibly();
+        }
+        processes.clear();
+        
+        for (JFrame fr : appletframes) {
+            fr.dispose();
+        }
+        appletframes.clear();
     }
     public static void main(String[] args) {
         
@@ -237,14 +222,10 @@ class Main {
         bottom.add(playbtn);
         bottom.add(spacing());
         
-        processes = new ArrayList<Process>();
         JButton quitallbtn = new JButton("Quit All");
         quitallbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                for (Process p : processes) {
-                    p.destroyForcibly();
-                }
-                processes.clear();
+                quitAll();
             }
         });
         bottom.add(quitallbtn);
