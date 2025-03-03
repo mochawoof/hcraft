@@ -77,7 +77,8 @@ class Main {
         try {
             URLClassLoader cl = new URLClassLoader(new URL[] {new File(file).toURL()});
             
-            Applet a = (Applet) Class.forName(clazz, true, cl).newInstance();
+            Class c = Class.forName(clazz, true, cl);
+            Applet a = (Applet) c.newInstance();
             
             JFrame f = new JFrame("Minecraft");
             f.setSize(800, 600);
@@ -95,8 +96,8 @@ class Main {
     private static void launchapplet(String file) {
         new Thread() {
             public void run() {
-                //appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
-                errorbox("Not yet supported!");
+                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+                //errorbox("Not yet supported!");
             }
         }.start();
     }
@@ -164,7 +165,7 @@ class Main {
             e.printStackTrace();
         }
         
-        f = new JFrame("HCraft 1.2.4");
+        f = new JFrame("HCraft 1.3");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(600, 300);
         f.setIconImage(Res.getAsImage("icon.png"));
