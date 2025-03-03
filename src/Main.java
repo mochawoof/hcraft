@@ -15,18 +15,20 @@ import java.net.URLClassLoader;
 import java.net.URL;
 import java.nio.file.Paths;
 
+import java.applet.*;
+
 class Main {
-    // .\\ should be changed to ..\\ while testing
-    private static String dir = norm("./jars/");
-    private static String bindir = norm("./bin/");
-    private static String datadir = norm("./data/");
+    // ./ should be changed to ../ while testing
+    private static String dir = norm("../jars/");
+    private static String bindir = norm("../bin/");
+    private static String datadir = norm("../data/");
     
     private static JFrame f;
     private static JTable table;
     private static String[][] rows;
     private static ArrayList<Process> processes;
     
-    public static String resolve(String path, String opath) {
+    private static String resolve(String path, String opath) {
         return Paths.get(path).toAbsolutePath().normalize().resolve(opath).toAbsolutePath().normalize().toString();
     }
     
@@ -71,10 +73,30 @@ class Main {
             }
         }.start();
     }
+    private static void appletframe(String file, String clazz) {
+        try {
+            URLClassLoader cl = new URLClassLoader(new URL[] {new File(file).toURL()});
+            
+            Applet a = (Applet) Class.forName(clazz, true, cl).newInstance();
+            
+            JFrame f = new JFrame("Minecraft");
+            f.setSize(800, 600);
+            f.add(a, BorderLayout.CENTER);
+            
+            a.init();
+            a.start();
+            
+            f.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Class load failed");
+        }
+    }
     private static void launchapplet(String file) {
         new Thread() {
             public void run() {
-                errorbox("Not yet supported!");
+                appletframe(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+                //errorbox("Not yet supported!");
             }
         }.start();
     }
