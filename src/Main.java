@@ -22,6 +22,7 @@ class Main {
     private static String dir = norm("../jars/");
     private static String bindir = norm("../bin/");
     private static String datadir = norm("../data/");
+    private static String appletrunnerdir = norm("../appletrunner/");
     
     private static JFrame f;
     private static JTable table;
@@ -78,17 +79,11 @@ class Main {
             file
         );
     }
-    private static void appletrunner(String file, String clazz) {
-        wrapprocess(
-            new ProcessBuilder("java", "-cp", resolve(dir, file), "-jar", resolve(bindir, "appletrunner.jar"), resolve(bindir, "natives"), bindir, norm(file), clazz), 
-            file
-        );
-    }
     private static void launchapplet(String file) {
-        appletrunner(resolve(dir, file), "net.minecraft.client.MinecraftApplet");
+        
     }
     private static void launchclassicapplet(String file) {
-        appletrunner(resolve(dir, file), "com.mojang.minecraft.MinecraftApplet");
+        
     }
     private static Component spacing() {
         return Box.createRigidArea(new Dimension(1, 0));

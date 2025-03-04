@@ -38,12 +38,7 @@ class Main {
             URLClassLoader cl = new URLClassLoader(classes);
             
             Class c = Class.forName(clazz, true, cl);
-            Applet a;
-            if (clazz.contains("com.mojang")) {
-                a = (ClassicMApplet) c.newInstance();
-            } else {
-                a = (MApplet) c.newInstance();
-            }
+            Applet a = (MApplet) c.newInstance();
             
             JFrame fr = new JFrame("Minecraft");
             fr.setSize(656, 519);
